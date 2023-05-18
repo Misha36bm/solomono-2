@@ -13,6 +13,10 @@ $executionTime = $end - $start;
 
 echo "Час виконання скрипта: $executionTime секунд";
 
+echo '<pre>';
+var_export($tree);
+echo '</pre>';
+
 // Видаляємо таблицю після виконання скрипта
 drop_table();
 
