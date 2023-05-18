@@ -5,6 +5,11 @@ push_dump();
 // Витягуєм дані таблиці з бази
 $array = get_data();
 
+// Вимірюємо час виконання
+$start = microtime(true);
+$tree = buildTree($array);
+$end = microtime(true);
+$executionTime = $end - $start;
 
 // Видаляємо таблицю після виконання скрипта
 drop_table();
@@ -57,6 +62,10 @@ function get_data()
     $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     return $results;
+}
+
+function buildTree($array)
+{
 }
 
 function drop_table()
