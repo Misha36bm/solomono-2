@@ -1,6 +1,12 @@
 <?php
+// Пушим дамп таблиці в базу
 push_dump();
 
+// Витягуєм дані таблиці з бази
+$array = get_data();
+
+
+// Видаляємо таблицю після виконання скрипта
 drop_table();
 
 function push_dump()
@@ -30,6 +36,28 @@ function push_dump()
     $pdo = null;
 }
 
+function get_data()
+{
+    $hostname = 'localhost';
+    $username = 'root';
+    $password = '123';
+    $database = 'tz_2';
+
+    try {
+        $pdo = new PDO("mysql:host=$hostname;dbname=$database", $username, $password);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    } catch (PDOException $e) {
+        echo "Connection failed: " . $e->getMessage();
+    }
+
+    $sql = "SELECT * FROM categories";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+
+    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    return $results;
+}
 
 function drop_table()
 {
