@@ -1,7 +1,7 @@
 <?php
 push_dump();
 
-
+drop_table();
 
 function push_dump()
 {
@@ -28,4 +28,24 @@ function push_dump()
     }
 
     $pdo = null;
+}
+
+
+function drop_table()
+{
+    $hostname = 'localhost';
+    $username = 'root';
+    $password = '123';
+    $database = 'tz_2';
+
+    try {
+        $pdo = new PDO("mysql:host=$hostname;dbname=$database", $username, $password);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    } catch (PDOException $e) {
+        echo "Connection failed: " . $e->getMessage();
+    }
+
+    $sql = "DROP TABLE categories";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
 }
