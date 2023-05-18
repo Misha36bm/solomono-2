@@ -7,7 +7,7 @@ $array = get_data();
 
 // Вимірюємо час виконання
 $start = microtime(true);
-$tree = buildTree($array);
+$tree = build_tree($array);
 $end = microtime(true);
 $executionTime = $end - $start;
 
@@ -66,8 +66,59 @@ function get_data()
     return $results;
 }
 
-function buildTree($array)
+/**
+ * Побудовує дерево на основі заданого масиву даних.
+ *
+ * Функція приймає масив даних у форматі:
+ * [
+ *     0 => ['categories_id' => 1, 'parent_id' => 0],
+ *     1 => ['categories_id' => 2, 'parent_id' => 0],
+ *     ...
+ * ]
+ *
+ * Кожен елемент масиву представляє категорію з властивостями 'categories_id' та 'parent_id'.
+ * 'categories_id' - ідентифікатор категорії
+ * 'parent_id' - ідентифікатор батьківської категорії
+ *
+ * Функція будує дерево, де кожен елемент масиву виступає як вузол дерева. Категорії з батьківським
+ * 'parent_id' рівним 0 вважаються кореневими вузлами. Категорії з неправильним 'parent_id' (які не
+ * мають відповідного батьківського елемента в масиві) будуть проігноровані.
+ *
+ * У побудованому дереві кожен елемент представлений асоціативним масивом з ключами:
+ * 'categories_id' - ідентифікатор категорії
+ * 'parent_id' - ідентифікатор батьківської категорії
+ * 'children' - масив дочірніх елементів, якщо вони є. Внутрішнє подерево також має таку структуру.
+ *
+ * @param array $array Масив даних для побудови дерева.
+ * @return array Масив, що представляє побудоване дерево.
+ */
+function build_tree($array)
 {
+    $hashTable = []; // Хеш-таблиця для швидкого доступу до елементів за їх categories_id
+    $tree = []; // Результат побудованого дерева
+
+    // Заповнення хеш-таблиці
+    foreach ($array as $key => $value) {
+        $hashTable[$value['categories_id']] = &$array[$key];
+    }
+
+    // Побудова дерева
+    foreach ($array as $key => $value) {
+        $parent_id = $value['parent_id'];
+        if ($parent_id == 0) {
+            // Кореневий вузол
+            $tree[$value['categories_id']] = &$array[$key];
+        } else {
+            // Пошук батьківського вузла за parent_id
+            if (isset($hashTable[$parent_id])) {
+                $parent = &$hashTable[$parent_id];
+                // Додавання поточного вузла як дочірнього для батьківського вузла
+                $parent['children'][$value['categories_id']] = &$array[$key];
+            }
+        }
+    }
+
+    return $tree;
 }
 
 function drop_table()
