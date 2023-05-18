@@ -11,6 +11,8 @@ $tree = buildTree($array);
 $end = microtime(true);
 $executionTime = $end - $start;
 
+echo "Час виконання скрипта: $executionTime секунд";
+
 // Видаляємо таблицю після виконання скрипта
 drop_table();
 
